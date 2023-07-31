@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+      margin: 50px auto;
+      box-shadow: 1px 3px 5px #ccc;
+    }
+
+    .container {
+      position: relative;
+    }
+
+    .container .round {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      display: block;
+      width: 6px;
+      height: 6px;
+      background-color: #85C35E;
+      border-radius: 50%;
+      box-shadow: 0 0 3px #85C35E;
+    }
+
+    .container .round.show {
+      opacity: 1;
+      transform: scale(1.5);
+      transition: transform .3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <i class="round"></i>
+    <canvas id="can"></canvas>
+  </div>
+  
+  <script>
+    const data = {
+      axis1: {
+        name: '降水量',
+        unit: "ml",
+        data: [6, 32, 70, 86, 68.7, 100.7, 125.6, 112.2, 78.7, 48.8, 36.0, 19.3],
+        max: 250
+      },
+      axis2: {
+        name: '温度',
+        unit: '°C',
+        max: 25,
+        data: [
+          6.0,
+          10.2,
+          10.3,
+          11.5,
+          10.3,
+          13.2,
+          14.3,
+          16.4,
+          18.0,
+          16.5,
+          12.0,
+          5.2
+        ]
+      },
+      bottom: [
+        '1月',
+        '2月',
+        '3月',
+        '4月',
+        '5月',
+        '6月',
+        '7月',
+        '8月',
+        '9月',
+        '10月',
+        '11月',
+        '12月'
+      ]
+    }
+    
+    const oContainer = document.querySelector('.container');
+    const oRound = oContainer.querySelector('.round');
+    const oCan = document.getElementById('can');
+    const ctx = oCan.getContext('2d');
+    const dpr = window.devicePixelRatio;
+
+    const circleData = [];
+    
+    const canPaddingX = 80;
+    const canPaddingY = 70;
+    const axisXGap = 40;
+    const bottomTextGap = 60;
+    const totalHeight = 5 * axisXGap;
+    const lineCount = 6;
+    const axisXWidth = axisXGap * 2 + (data.bottom.length - 1) * bottomTextGap;
+    const canWidth = axisXWidth + canPaddingX * 2;
+    const canHeight = axisXGap * 5 + canPaddingY * 2;
+    
+    oContainer.style.width = canWidth + 'px';
+    oContainer.style.height = canHeight + 'px';
+
+    let xGap = canPaddingY;
+    let leftNumber = data.axis2.max;
+    let rightNumber = data.axis1.max;
+    let textGap = bottomTextGap;
+
+    const init = () => {
+      adaptDpr (oCan, canWidth, canHeight);
+      bindEvent();
+      setDefaultStyle();
+      drawAxisField();
+      drawAxisLines(drawBottomText);
+      drawCircles();
+      drawCircleConnectors();
+      drawRects();
+    }
+
+    function bindEvent () {
+      oCan.addEventListener('mousemove', handleCanvasMouseOver, false);
+    }
+
+    function handleCanvasMouseOver (e) {
+      const x = e.clientX;
+      const y = e.clientY;
+
+      const circlePos = checkInPath(x, y);
+
+      if (circlePos.length) {
+        oRound.style.left = circlePos[0] - 5 + 'px';
+        oRound.style.top = circlePos[1] - 5 + 'px';
+        oRound.classList.add('show');
+      } else {
+        oRound.classList.remove('show');
+      }
+      
+    }
+
+    function setDefaultStyle () {
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.font = '14px Arial'; 
+    }
+
+    function drawAxisField () {
+      const textPosX = xGap - 30;
+
+      ctx.fillStyle = '#333';
+      
+      ctx.fillText(data.axis2.name, canPaddingY, textPosX);
+      ctx.fillText(data.axis1.name, axisXWidth + canPaddingX - 20, textPosX);
+    }
+
+    function drawAxisLines (callback) {
+      for (let i = 0; i < lineCount; i ++) {
+        const isFinalLine = i === lineCount - 1;
+
+        drawAxisLine(isFinalLine);
+
+        if (isFinalLine) {
+          for (let i = 0; i < data.bottom.length; i ++) {
+            callback(i);
+          }
+        }
+      }
+    }
+
+    function drawCircles () {
+      for (let i = 0; i < data.axis2.data.length; i ++) {
+        drawCircle (i);
+      }
+    }
+
+    function drawCircleConnectors () {
+      for (let i = 0; i < circleData.length - 1; i ++) {
+        drawCircleConnector(i);
+      }
+    }
+
+    function drawRects () {
+      for (let i = 0; i < data.axis1.data.length; i ++) {
+        drawRect(i);
+      }
+    }
+
+    function drawBottomText (index) {
+      const text = data.bottom[index];
+      const bottomTextWidth = ctx.measureText(text).width;
+      const startX = canPaddingX + axisXGap + index * textGap; 
+
+      ctx.beginPath();
+      ctx.moveTo(startX, xGap - axisXGap);
+      ctx.lineTo(startX, xGap - axisXGap + 10);
+      ctx.fillText(text, startX - bottomTextWidth / 2, xGap - axisXGap + 30);
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    function drawAxisLine (isFinalLine) {
+      const leftText = leftNumber + ' ' + data.axis2.unit;
+      const rightText = rightNumber + ' ' + data.axis1.unit;
+
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = isFinalLine ? '#333' : '#ccc';
+      ctx.fillStyle = '#333';
+
+      ctx.beginPath();
+      ctx.moveTo(canPaddingX, xGap);
+      ctx.lineTo(axisXWidth + canPaddingX, xGap);
+      ctx.textAlign = 'end';
+      ctx.fillText(leftText, canPaddingX - 10, xGap);
+      ctx.textAlign = 'start';
+      ctx.fillText(rightText, axisXWidth + canPaddingX + 10, xGap);
+      ctx.stroke();
+      ctx.closePath();
+
+      leftNumber -= 5;
+      rightNumber -= 50;
+
+      xGap += axisXGap;
+    }
+
+    function drawCircle (index) {
+      const [ x, y ] = cToPx(index);
+
+      circleData.push([ x, y ]);
+
+      ctx.fillStyle = '#85C35E';
+      ctx.beginPath();
+      ctx.arc(x - 2, y - 2, 3, 0, 2 * Math.PI * 3);
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawCircleConnector (index) {
+      const [ x1, y1 ] = circleData[index];
+      const [ x2, y2 ] = circleData[index + 1];
+
+      ctx.strokeStyle = '#85C35E';
+      ctx.beginPath();
+      ctx.moveTo(x1, y1 - 2);
+      ctx.lineTo(x2, y2 - 2);
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    function drawRect (index) {
+      const [ x, y ] = mlToPx(index);
+
+      ctx.fillStyle = '#5A6FC0';
+
+      ctx.beginPath();
+      ctx.fillRect(x - 20, y, 40, canPaddingY + totalHeight - y);
+      ctx.closePath();
+    }
+
+    function cToPx (index) {
+      const x = canPaddingX + axisXGap + index * bottomTextGap;
+      const y = totalHeight - data.axis2.data[index] * totalHeight / data.axis2.max + canPaddingY;
+      
+      return [x, y];
+    }
+
+    function mlToPx (index) {
+      const x = canPaddingX + axisXGap + index * bottomTextGap;
+      const y = totalHeight - data.axis1.data[index] * totalHeight / data.axis1.max + canPaddingY;
+      
+      return [x, y];
+    }
+
+    function adaptDpr (canvas, width, height) {
+      oCan.width = Math.floor(width * dpr);
+      oCan.height = Math.floor(height * dpr);
+      oCan.style.width = width + 'px';
+      oCan.style.height = height + 'px';
+      ctx.scale(dpr, dpr);
+    }
+
+    function checkInPath (x, y) {
+      for (let i = 0; i < circleData.length; i ++) {
+        const [ rx, ry ] = circleData[i];
+        const _x = rx + oContainer.offsetLeft;
+        const _y = ry + oContainer.offsetTop;
+
+        if (
+          x >= _x - 3 &&
+          x <= _x + 3 &&
+          y >= _y - 3 &&
+          y <= _y + 3
+        ) {
+          return [ rx, ry ];
+        }
+      }
+
+      return [];
+    }
+
+    init();
+
+  </script>
+</body>
+</html>

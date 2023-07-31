@@ -1,0 +1,49 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+.tab-wrap {
+  width: 500px;
+  margin: 50px auto;
+}
+
+.tab {
+  display: flex;
+}
+
+.tab-item {
+  padding: 15px 30px;
+}
+
+.tab-item.active {
+  background-color: #333;
+}
+
+.tab-item.active a {
+  color: #fff;
+}
+
+.page {
+  width: 500px;
+  height: 448px;
+  border: 1px solid #333;
+}
+
+.page-item {
+  display: none;
+  width: 500px;
+  height: 448px;
+  line-height: 448px;
+  text-align: center;
+  font-size: 40px;
+}
+
+.page-item.cur {
+  display: block;
+}
