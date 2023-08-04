@@ -153,7 +153,7 @@ function getStyles(el, prop) {
 }
 
 /**
- * 相对于当前文档的坐标(包含滚动条的距离)
+ * 触发位置相对于当前文档的坐标(包含滚动条的距离)
  * pageX/pageY的兼容性写法
  * @param { 事件对象 } e
  * @returns {
