@@ -23,7 +23,6 @@ let initMenu = function () {
   for (let i = 0; i < menuLen; i++) {
     menuItem = oMenuItems[i];
     addEvent(menuItem, "mouseenter", menuItemMouseEnter);
-    // addEvent(menuItem, "mouseleave", menuItemMouseLeave);
   }
 
   addEvent(oMenu, "mouseenter", function () {
@@ -44,8 +43,9 @@ let initMenu = function () {
     let e = ev || window.event,
       tar = e.target || e.srcElement,
       thisIdx = Array.prototype.indexOf.call(oMenuItems, tar),
-      lastPos = mousePoses[mousePoses.length - 2] || { x: 0, y: 0 },
-      curPos = mousePoses[mousePoses.length - 1] || { x: 0, y: 0 },
+      posLen = mousePoses.length,
+      lastPos = mousePoses[posLen - 2] || { x: 0, y: 0 }, // a
+      curPos = mousePoses[posLen - 1] || { x: 0, y: 0 }, // p
       toDelay = doTimeout(lastPos, curPos);
 
     oSub.className = "sub";
@@ -97,7 +97,7 @@ let initMenu = function () {
       y: pagePos(e).Y,
     });
 
-    if (mousePoses.length > 3) {
+    if (mousePoses.length >= 3) {
       mousePoses.shift();
     }
   }
@@ -118,7 +118,7 @@ let initMenu = function () {
       x: getStyles(oMenu, "width") + getStyles(oMenu, "margin-left"),
       y: getStyles(oMenu, "margin-top") + getStyles(oSub, "height"),
     };
-    // p a b c
-    return pointInTriangle(curPos, lastPos, topLeft, bottomLeft);
+
+    return pointInTriangle({ curPos, lastPos, topLeft, bottomLeft });
   }
 };

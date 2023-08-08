@@ -227,10 +227,10 @@ function sameSymbols(a, b) {
   return (a ^ b) >= 0;
 }
 
-function pointInTriangle(p, a, b, c) {
-  let PA = vec(p, a),
-    PB = vec(p, b),
-    PC = vec(p, c),
+function pointInTriangle(opt) {
+  let PA = vec(opt.curPos, opt.lastPos),
+    PB = vec(opt.curPos, opt.topLeft),
+    PC = vec(opt.curPos, opt.bottomLeft),
     R1 = vecProduct(PA, PB),
     R2 = vecProduct(PB, PC),
     R3 = vecProduct(PC, PA);
