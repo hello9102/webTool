@@ -153,29 +153,6 @@ function getStyles(el, prop) {
 }
 
 /**
- * @param {*} el
- * @returns {
- *  DOM元素相对于HTML文档的x、y距离
- * }
- */
-function getElemDocPosition(el) {
-  let parent = el.offsetParent,
-    offsetLeft = el.offsetLeft,
-    offsetTop = el.offsetTop;
-
-  while (parent) {
-    offsetLeft += parent.offsetLeft;
-    offsetTop += parent.offsetTop;
-    parent = parent.offsetParent;
-  }
-
-  return {
-    left: offsetLeft,
-    top: offsetTop,
-  };
-}
-
-/**
  * 相对于当前文档的坐标(包含滚动条的距离)
  * pageX/pageY的兼容性写法
  * @param { 事件对象 } e
@@ -198,64 +175,24 @@ function pagePos(e) {
 }
 
 /**
- * 拖拽元素
- * @param { 元素节点 } elem
+ * @param {*} el
+ * @returns {
+ *  DOM元素相对于HTML文档的x、y距离
+ * }
  */
-function elemDrag(elem) {
-  let x, y;
+function getElemDocPosition(el) {
+  let parent = el.offsetParent,
+    offsetLeft = el.offsetLeft,
+    offsetTop = el.offsetTop;
 
-  addEvent(elem, "mousedown", function (ev) {
-    let e = ev || window.event;
-
-    x = pagePos(e).X - getStyles(elem, "left");
-    y = pagePos(e).X - getStyles(elem, "top");
-
-    addEvent(document, "mousemove", mouseMove);
-    addEvent(document, "mouseup", mouseUp);
-
-    cancelBubble(e);
-    preventDefaultEvent(e);
-  });
-
-  function mouseMove(ev) {
-    let e = ev || window.event;
-    elem.style.left = pagePos(e).X - x + "px";
-    elem.style.top = pagePos(e).Y - y + "px";
+  while (parent) {
+    offsetLeft += parent.offsetLeft;
+    offsetTop += parent.offsetTop;
+    parent = parent.offsetParent;
   }
 
-  function mouseUp(ev) {
-    let e = ev || window.event;
-
-    removeEvent(document, "mousemove", mouseMove);
-    removeEvent(document, "mouseup", mouseUp);
-  }
-}
-
-/**
- * 判断点是否在一个三角形内
- */
-
-function vec(a, b) {
   return {
-    x: b.x - a.x,
-    y: b.y - a.y,
+    left: offsetLeft,
+    top: offsetTop,
   };
-}
-
-function vecProduct(v1, v2) {
-  return v1.x * v2.y - v2.x * v1.y;
-}
-
-function sameSymbols(a, b) {
-  return (a ^ b) >= 0;
-}
-
-function pointInTriangle(opt) {
-  let PA = vec(opt.curPos, opt.lastPos),
-    PB = vec(opt.curPos, opt.topLeft),
-    PC = vec(opt.curPos, opt.bottomLeft),
-    R1 = vecProduct(PA, PB),
-    R2 = vecProduct(PB, PC),
-    R3 = vecProduct(PC, PA);
-  return sameSymbols(R1, R2) && sameSymbols(R2, R3);
 }

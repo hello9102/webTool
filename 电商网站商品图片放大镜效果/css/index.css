@@ -1,0 +1,36 @@
+.img-wrap {
+  position: relative;
+  width: 437px;
+  height: 600px;
+  margin: 100px auto;
+  box-shadow: 0 0 5px #999;
+}
+
+.img-wrap .mag-wrap {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150px;
+  height: 150px;
+  background-color: #fff;
+  box-shadow: 0 0 3px #ccc;
+  overflow: hidden;
+}
+
+.img-wrap .mag-wrap.show {
+  display: block;
+  transform: scale(1.5);
+}
+
+.img-wrap .mag-wrap .mag-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 437px;
+  height: 600px;
+}
+
+.img-wrap .static-img {
+  height: 100%;
+}
