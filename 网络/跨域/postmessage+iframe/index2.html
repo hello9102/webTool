@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="utils.js"></script>
+    <script>
+      $.post(
+        "接口地址",
+        {
+          status: 1,
+        },
+        (data) => {
+          window.parent.postMessage(JSON.stringify(data), "接收数据方的主域名");
+        }
+      );
+    </script>
+  </body>
+</html>

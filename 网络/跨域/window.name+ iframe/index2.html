@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="utils.js"></script>
+    <script>
+      // iframe引入这个页面，然后在这个页面发起请求
+      $.post(
+        "接口地址",
+        {
+          status: 1, //参数
+        },
+        (data) => {
+          window.name = JSON.stringify(data);
+        }
+      );
+    </script>
+  </body>
+</html>

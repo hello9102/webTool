@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <iframe
+      src="http://test2.hello9102.com/hash/index3.html"
+      id="iframe"
+    ></iframe>
+    <script src="utils.js"></script>
+    <script>
+      // 当前页面是: test页面
+      let hash = location.hash.substring(1),
+        iframe = document.getElementById("iframe");
+
+      switch (hash) {
+        case "getCourses":
+          $.post(
+            "http://test.hello9102.com/get_courses.php",
+            {
+              status: 1,
+            },
+            (data) => {
+              let str = JSON.stringify(data);
+              iframe.src = "http://test2.hello9102.com/hash/index3.html#" + str;
+            }
+          );
+      }
+    </script>
+  </body>
+</html>

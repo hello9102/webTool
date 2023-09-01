@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let flag = false;
+
+      let iframe = document.createElement("iframe");
+      let getDatas = function () {
+        if (flag) {
+          let data = iframe.contentWindow.name;
+          console.log(JSON.parse(data));
+        } else {
+          flag = true;
+          setTimeout(() => {
+            //跳转，iframe就会重新加载
+            iframe.contentWindow.location = "与该页面同源的页面地址";
+          }, 500);
+        }
+      };
+      iframe.src = "与该页面非同源的地址,如：./index2.html";
+
+      if (iframe.attachEvent) {
+        iframe.attachEvent("onload", getDatas);
+      } else {
+        iframe.onload = getDatas;
+      }
+      document.body.appendChild(iframe);
+    </script>
+  </body>
+</html>
