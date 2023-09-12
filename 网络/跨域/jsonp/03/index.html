@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">获取资源</button>
+    <script src="./utils/ajax.js"></script>
+    <script>
+      // 当前页面在http://test.hello9102.com下
+
+      let oBtn = document.getElementById("btn");
+
+      oBtn.onclick = function () {
+        // oScript = document.createElement("script");
+        // oScript.src = "http://test1.hello9102.com/jsonp/jsonp.js?cb=test3";
+        // document.body.appendChild(oScript);
+        // document.body.removeChild(oScript);
+
+        // 后端执行了test({数据})函数
+        $.ajax({
+          url: "https://api.asilu.com/today",
+          type: "get",
+          dataType: "JSONP",
+          jsonp: "callback",
+          jsonpCallback: "test",
+          success: function (res) {
+            console.log(res.data);
+          },
+        });
+      };
+
+      // function test(data) {
+      //   console.log(data);
+      // }
+    </script>
+  </body>
+</html>

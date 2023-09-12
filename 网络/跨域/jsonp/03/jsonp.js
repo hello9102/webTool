@@ -133,3 +133,14 @@ let $ = (function () {
     },
   };
 })();
+
+$.ajax({
+  url: "http://test1.hello9102.com/get_courses",
+  type: "post",
+  data: {
+    status: 1,
+  },
+  success: function (data) {
+    test(data);
+  },
+});
