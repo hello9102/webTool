@@ -113,44 +113,44 @@ let promise = new Promise((resolve, reject) => {
 //   );
 
 // cathch捕获异常
-promise
-  .then((value) => {
-    return value; // 普通值
-  })
-  .then((value) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject("ERROR");
-      }, 2000);
-    });
-  })
-  .then(
-    (value) => {
-      console.log(value);
-    },
-    (reason) => {
-      console.log("Rejected: " + reason); // Rejected: ERROR
-      // 默认 return undefined
-    }
-  )
-  .then((value) => {
-    throw new Error("Throw Error");
-  })
-  .then(
-    (value) => {
-      console.log(value);
-    }
-    // (reason) => {
-    //   console.log("Then " + reason);// then捕获错误的话走不到catch
-    // }
-  )
-  .catch((err) => {
-    console.log("Catch: " + err); // Catch: Error: Throw Error
-    return "Catch Error";
-  })
-  .then((value) => {
-    console.log("Then: " + value); // Then: Catch Error
-  });
+// promise
+//   .then((value) => {
+//     return value; // 普通值
+//   })
+//   .then((value) => {
+//     return new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         reject("ERROR");
+//       }, 2000);
+//     });
+//   })
+//   .then(
+//     (value) => {
+//       console.log(value);
+//     },
+//     (reason) => {
+//       console.log("Rejected: " + reason); // Rejected: ERROR
+//       // 默认 return undefined
+//     }
+//   )
+//   .then((value) => {
+//     throw new Error("Throw Error");
+//   })
+//   .then(
+//     (value) => {
+//       console.log(value);
+//     }
+//     // (reason) => {
+//     //   console.log("Then " + reason);// then捕获错误的话走不到catch
+//     // }
+//   )
+//   .catch((err) => {
+//     console.log("Catch: " + err); // Catch: Error: Throw Error
+//     return "Catch Error";
+//   })
+//   .then((value) => {
+//     console.log("Then: " + value); // Then: Catch Error
+//   });
 
 // catch在Promise的源码层面上就是一个then，Catch也是遵循then的运行原则的
 
@@ -166,3 +166,23 @@ promise
 // javascript jQuery return this
 // then 不具备this
 // return new Promise
+
+// promise.then(()=>{
+
+// }) // return new Promise().then
+// .then()
+
+let promise2 = promise
+  .then((value) => {
+    // return 第一次返回的新的Promise结果
+  })
+  .then((value) => {
+    // return 第二次返回的新的Promise结果
+  });
+
+let promise3 = promise.then(() => {
+  // return 第一次返回的新的Promise结果
+});
+
+// 第一次then返回的新的Promise结果
+promise3.then(() => {});
