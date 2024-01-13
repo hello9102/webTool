@@ -259,3 +259,54 @@ function pointInTriangle(opt) {
     R3 = vecProduct(PC, PA);
   return sameSymbols(R1, R2) && sameSymbols(R2, R3);
 }
+
+// 去除空格
+function trimSpace(str) {
+  return str.replace(/\s+/gim, "");
+}
+
+// 手机号验证
+function phoneNumberCheck(str) {
+  return /^(\(\+86\))?(13[0-9]|14[57]|15[012356789]|17[03678]|18[0-9])\d{8}$/.test(
+    str
+  );
+}
+
+// 验证字符串中是否只包含数字
+function digitCheck(str) {
+  return /\D/g.test(str);
+}
+
+// 验证字符串中是否只包含字母
+function alphabetCheck(str) {
+  return /[^A-z]/g.test(str);
+}
+
+// cookie增删改查
+var manageCookies = {
+  set: function (key, value, expTime) {
+    document.cookie = key + "=" + value + ";max-age=" + expTime;
+    return this;
+  },
+
+  delete: function (key) {
+    return this.set(key, "", -1);
+  },
+
+  get: function (key, cb) {
+    var CookiesArray = document.cookie.split("; ");
+
+    for (var i = 0; i < CookiesArray.length; i++) {
+      var CookieItem = CookiesArray[i];
+
+      var CookieItemArray = CookieItem.split("=");
+
+      if (CookieItemArray[0] == key) {
+        cb(CookieItemArray[1]);
+        return this;
+      }
+    }
+    cb(undefined);
+    return this;
+  },
+};
